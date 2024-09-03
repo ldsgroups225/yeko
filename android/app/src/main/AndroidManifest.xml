@@ -26,8 +26,9 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="io.ldsgroup.yeko"/>
-        <data android:scheme="io.ldsgroup.yeko"/>
+        <data android:scheme="io.ldsgroups.yeko"/>
+        <data android:scheme="io.ldsgroups.yeko"/>
+        <data android:scheme="exp+yeko"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

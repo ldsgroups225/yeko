@@ -4,6 +4,7 @@
 export enum Routes {
   Home = 'Home',
   Login = 'Login',
+  Register = 'Register',
   Discussion = 'Discussion',
   ConversationDetail = 'ConversationDetail',
   Homework = 'Homework',
@@ -18,6 +19,7 @@ export enum Routes {
  */
 export type RootStackParams = {
   [Routes.Home]: undefined;
+  [Routes.Register]: undefined;
   [Routes.Login]: undefined;
   [Routes.Discussion]: undefined;
   [Routes.Homework]: undefined;
@@ -26,9 +28,9 @@ export type RootStackParams = {
   [Routes.Punctuality]: undefined;
   [Routes.Schedule]: undefined;
   [Routes.ConversationDetail]: {
-    templateId: string,
-    templateTitle: string,
-    recipient: string,
+    templateId: string;
+    templateTitle: string;
+    recipient: string;
   };
 };
 
@@ -37,4 +39,4 @@ export type RootStackParams = {
  */
 export type NavigationParams = RootStackParams;
 
-export default Routes
+export default Routes;

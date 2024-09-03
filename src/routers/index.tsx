@@ -18,13 +18,16 @@ import { enableScreens } from 'react-native-screens';
 import { navigationRef } from '../helpers/router';
 import DiscussionScreen from "@modules/core/screens/discussionScreen";
 import ConversationDetailScreen from "@modules/core/screens/conversationDetailScreen";
+import Registration from '@modules/app/screens/Register';
+import { useAuth } from '@hooks/useAuth';
 
 enableScreens();
 
 const Stack = createStackNavigator<RootStackParams>();
 
 function RootNavigation() {
-  const isSignedIn = useAppSelector((s) => s.AppReducer?.isSignedIn);
+    const { account } = useAuth()
+  const isSignedIn = useAppSelector((s) => s.AppReducer?.isSignedIn) && account;
   const userColorScheme = useAppSelector((s) => s?.AppReducer?.userColorScheme);
   const theme = useTheme();
   const isDarkTheme = userColorScheme === 'dark';
@@ -123,11 +126,16 @@ function RootNavigation() {
             </>
           ) : (
             <>
-              <Stack.Screen
-                name={Routes.Login}
-                component={Login}
-                options={{ headerShown: false }}
-              />
+            <Stack.Screen
+              name={Routes.Login}
+              component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name={Routes.Register}
+              component={Registration}
+              options={{ headerShown: false }}
+            />
             </>
           )}
         </Stack.Navigator>

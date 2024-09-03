@@ -3,6 +3,8 @@ import CsText from '@components/CsText';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemedStyles } from '@hooks/index';
 import useDataFetching from '@hooks/useDataFetching';
+import { useHomework } from '@hooks/useHomework';
+import { IHomeworkDTO } from '@modules/core/types/IHomeworkDTO';
 import { borderRadius, shadows } from '@styles/index';
 import { spacing } from '@styles/spacing';
 import { ITheme } from '@styles/theme';
@@ -12,50 +14,38 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { AnimatedFlatList, LoadingScreen, SummaryCard } from '../components/index';
 import { formatDate, groupBy } from '../utils/index';
 
-interface Homework {
-  id: string;
-  classId: string;
-  subjectId: string;
-  subjectName: string;
-  dueDate: Date;
-  itWillBeANote: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 const HomeworkScreen: React.FC = () => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
 
+  const { getHomeworks } = useHomework();
+
   const fetchHomework = useCallback(async () => {
+    return await getHomeworks('66c1d14b0035eaab4773');
     // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const mockData: Homework[] = [
-      {
-        id: '1',
-        classId: 'class1',
-        subjectId: 'subject1',
-        subjectName: 'Mathématiques',
-        dueDate: new Date(2024, 3, 15),
-        itWillBeANote: true,
-        createdAt: new Date(2024, 3, 10),
-        updatedAt: new Date(2024, 3, 10),
-      },
-      {
-        id: '2',
-        classId: 'class1',
-        subjectId: 'subject2',
-        subjectName: 'Français',
-        dueDate: new Date(2024, 3, 16),
-        itWillBeANote: false,
-        createdAt: new Date(2024, 3, 11),
-        updatedAt: new Date(2024, 3, 11),
-      },
-      // Add more mock data as needed
-    ];
+    // const mockData: IHomeworkDTO[] = [
+    //   {
+    //     id: '1',
+    //     classId: 'class1',
+    //     subjectId: 'subject1',
+    //     subjectName: 'Mathématiques',
+    //     dueDate: new Date(2024, 3, 15),
+    //     itWillBeANote: true,
+    //   },
+    //   {
+    //     id: '2',
+    //     classId: 'class1',
+    //     subjectId: 'subject2',
+    //     subjectName: 'Français',
+    //     dueDate: new Date(2024, 3, 16),
+    //     itWillBeANote: false,
+    //   },
+    //   // Add more mock data as needed
+    // ];
 
-    return mockData;
+    // return mockData;
   }, []);
 
   const {
@@ -127,7 +117,7 @@ const HomeworkScreen: React.FC = () => {
   );
 
   const renderHomeworkItem = useCallback(
-    ({ item }: { item: Homework }) => <HomeworkItem homework={item} />,
+    ({ item }: { item: IHomeworkDTO }) => <HomeworkItem homework={item} />,
     []
   );
 
@@ -167,7 +157,7 @@ const HomeworkScreen: React.FC = () => {
   );
 };
 
-const HomeworkItem: React.FC<{ homework: Homework }> = React.memo(({ homework }) => {
+const HomeworkItem: React.FC<{ homework: IHomeworkDTO }> = React.memo(({ homework }) => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
   const opacity = useSharedValue(0);
 

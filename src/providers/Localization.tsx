@@ -5,7 +5,7 @@ import moment from "moment";
 import "moment/min/locales";
 import * as Localization from "expo-localization";
 import { I18n } from "i18n-js";
-import { TrResource, EnResource } from "@src/localization/index";
+import { TrResource, EnResource, FrResource } from "@src/localization/index";
 
 const defaultLocale = "en";
 const deviceLanguage =
@@ -34,6 +34,7 @@ const i18n = new I18n(
   {
     en: EnResource,
     tr: TrResource,
+    fr: FrResource,
   },
   {
     locale: deviceLanguage,

@@ -28,6 +28,28 @@ const resource = {
     settings: 'Ayarlar',
     post: 'Gönderi',
   },
+  welcome: 'Hoş geldiniz!',
+  welcomeBack: 'Tekrar hoş geldiniz!',
+  email: 'E-posta',
+  password: 'Şifre',
+  forgotPassword: 'Şifrenizi mi unuttunuz?',
+  login: 'Giriş Yap',
+  or: 'veya',
+  loginWithGoogle: 'Google ile Giriş Yap',
+  dontHaveAccount: 'Hesabınız yok mu?',
+  register: 'Kayıt Ol',
+  googleLoginNotImplemented: 'Google girişi henüz uygulanmadı.',
+  forgotPasswordNotImplemented: 'Şifremi unuttum işlevi henüz uygulanmadı.',
+  createAccount: 'Hesap Oluştur',
+  fullName: 'Ad Soyad',
+  invalidEmail: 'Geçersiz E-posta',
+  confirmPassword: 'Şifreyi Onayla',
+  passwordsDoNotMatch: 'Şifreler eşleşmiyor',
+  acceptTerms: 'Kabul ediyorum', // Consider adding "the" -> "Şartlar ve Koşulları kabul ediyorum"
+  termsAndConditions: 'Şartlar ve Koşullar',
+  termsAndConditionsNotImplemented: 'Şartlar ve Koşullar henüz uygulanmadı.',
+  registrationSuccessful: 'Kayıt başarılı!',
+  back: 'Geri',
 };
 
 export default resource;

@@ -1,7 +1,10 @@
 import CsCard from '@components/CsCard';
 import CsText from '@components/CsText';
 import { useThemedStyles } from '@hooks/index';
+import { useAttendance } from '@hooks/useAttendance';
+import { useAuth } from '@hooks/useAuth';
 import useDataFetching from '@hooks/useDataFetching';
+import { AttendanceStatus, IAttendanceDTO } from '@modules/core/types/IAttendanceDTO';
 import { shadows } from '@styles/index';
 import { spacing } from '@styles/spacing';
 import { ITheme } from '@styles/theme';
@@ -11,119 +14,112 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { AnimatedFlatList, LoadingScreen, SummaryCard } from '../components/index';
 import { formatDate, groupBy } from '../utils/index';
 
-type AttendanceStatus = 'present' | 'absent' | 'late';
-
-interface Attendance {
-  id: string;
-  date: Date;
-  status: AttendanceStatus;
-  isExcused: boolean;
-  subject: string;
-  startTime: string;
-  endTime: string;
-}
-
 const PunctualityScreen: React.FC = () => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
 
+  const { account } = useAuth();
+  const { getAttendances } = useAttendance();
+
   const fetchAttendances = useCallback(async () => {
     // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const selectedStudentId = account?.studentIDs?.length ? account!.studentIDs[0] : '';
+    return await getAttendances(selectedStudentId);
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const mockData: Attendance[] = [
-      {
-        id: '1',
-        date: new Date(2024, 2, 4),
-        status: 'absent',
-        isExcused: false,
-        subject: 'Mathématiques',
-        startTime: '08:00',
-        endTime: '10:00',
-      },
-      {
-        id: '2',
-        date: new Date(2024, 2, 4),
-        status: 'late',
-        isExcused: true,
-        subject: 'Physique',
-        startTime: '10:15',
-        endTime: '10:30',
-      },
-      {
-        id: '3',
-        date: new Date(2024, 2, 5),
-        status: 'absent',
-        isExcused: true,
-        subject: 'Littérature',
-        startTime: '13:00',
-        endTime: '15:00',
-      },
-      {
-        id: '4',
-        date: new Date(2024, 2, 5),
-        status: 'late',
-        isExcused: false,
-        subject: 'Chimie',
-        startTime: '15:15',
-        endTime: '15:30',
-      },
-      {
-        id: '5',
-        date: new Date(2024, 2, 6),
-        status: 'absent',
-        isExcused: false,
-        subject: 'Histoire',
-        startTime: '09:00',
-        endTime: '11:00',
-      },
-      {
-        id: '6',
-        date: new Date(2024, 2, 6),
-        status: 'present',
-        isExcused: false,
-        subject: 'Géographie',
-        startTime: '11:15',
-        endTime: '13:15',
-      },
-      {
-        id: '7',
-        date: new Date(2024, 2, 7),
-        status: 'late',
-        isExcused: false,
-        subject: 'Anglais',
-        startTime: '08:30',
-        endTime: '08:45',
-      },
-      {
-        id: '8',
-        date: new Date(2024, 2, 7),
-        status: 'present',
-        isExcused: false,
-        subject: 'Informatique',
-        startTime: '14:00',
-        endTime: '16:00',
-      },
-      {
-        id: '9',
-        date: new Date(2024, 2, 8),
-        status: 'absent',
-        isExcused: true,
-        subject: 'Éducation Physique',
-        startTime: '10:00',
-        endTime: '12:00',
-      },
-      {
-        id: '10',
-        date: new Date(2024, 2, 8),
-        status: 'present',
-        isExcused: false,
-        subject: 'Arts Plastiques',
-        startTime: '13:30',
-        endTime: '15:30',
-      },
-    ];
-    return mockData;
+    // const mockData: Attendance[] = [
+    //   {
+    //     id: '1',
+    //     date: new Date(2024, 2, 4),
+    //     status: 'absent',
+    //     isExcused: false,
+    //     subject: 'Mathématiques',
+    //     startTime: '08:00',
+    //     endTime: '10:00',
+    //   },
+    //   {
+    //     id: '2',
+    //     date: new Date(2024, 2, 4),
+    //     status: 'late',
+    //     isExcused: true,
+    //     subject: 'Physique',
+    //     startTime: '10:15',
+    //     endTime: '10:30',
+    //   },
+    //   {
+    //     id: '3',
+    //     date: new Date(2024, 2, 5),
+    //     status: 'absent',
+    //     isExcused: true,
+    //     subject: 'Littérature',
+    //     startTime: '13:00',
+    //     endTime: '15:00',
+    //   },
+    //   {
+    //     id: '4',
+    //     date: new Date(2024, 2, 5),
+    //     status: 'late',
+    //     isExcused: false,
+    //     subject: 'Chimie',
+    //     startTime: '15:15',
+    //     endTime: '15:30',
+    //   },
+    //   {
+    //     id: '5',
+    //     date: new Date(2024, 2, 6),
+    //     status: 'absent',
+    //     isExcused: false,
+    //     subject: 'Histoire',
+    //     startTime: '09:00',
+    //     endTime: '11:00',
+    //   },
+    //   {
+    //     id: '6',
+    //     date: new Date(2024, 2, 6),
+    //     status: 'present',
+    //     isExcused: false,
+    //     subject: 'Géographie',
+    //     startTime: '11:15',
+    //     endTime: '13:15',
+    //   },
+    //   {
+    //     id: '7',
+    //     date: new Date(2024, 2, 7),
+    //     status: 'late',
+    //     isExcused: false,
+    //     subject: 'Anglais',
+    //     startTime: '08:30',
+    //     endTime: '08:45',
+    //   },
+    //   {
+    //     id: '8',
+    //     date: new Date(2024, 2, 7),
+    //     status: 'present',
+    //     isExcused: false,
+    //     subject: 'Informatique',
+    //     startTime: '14:00',
+    //     endTime: '16:00',
+    //   },
+    //   {
+    //     id: '9',
+    //     date: new Date(2024, 2, 8),
+    //     status: 'absent',
+    //     isExcused: true,
+    //     subject: 'Éducation Physique',
+    //     startTime: '10:00',
+    //     endTime: '12:00',
+    //   },
+    //   {
+    //     id: '10',
+    //     date: new Date(2024, 2, 8),
+    //     status: 'present',
+    //     isExcused: false,
+    //     subject: 'Arts Plastiques',
+    //     startTime: '13:30',
+    //     endTime: '15:30',
+    //   },
+    // ];
+    // return mockData;
   }, []);
 
   const {
@@ -202,7 +198,7 @@ const PunctualityScreen: React.FC = () => {
   );
 
   const renderAttendanceItem = useCallback(
-    ({ item }: { item: Attendance }) => <AttendanceItem attendance={item} />,
+    ({ item }: { item: IAttendanceDTO }) => <AttendanceItem attendance={item} />,
     []
   );
 
@@ -242,7 +238,7 @@ const PunctualityScreen: React.FC = () => {
   );
 };
 
-const AttendanceItem: React.FC<{ attendance: Attendance }> = React.memo(({ attendance }) => {
+const AttendanceItem: React.FC<{ attendance: IAttendanceDTO }> = React.memo(({ attendance }) => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
   const opacity = useSharedValue(0);
 

@@ -53,5 +53,5 @@
   },
   "files.eol": "\n",
   "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "cSpell.words": ["Ionicons", "MMKV", "Pressable"]
+  "cSpell.words": ["appwrite", "Ionicons", "MMKV", "Pressable"]
 }

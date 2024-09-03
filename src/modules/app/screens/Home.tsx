@@ -1,8 +1,8 @@
-import CsCard from '@components/CsCard';
 import CsText from '@components/CsText';
 import { Ionicons } from '@expo/vector-icons';
 import { navigationRef } from '@helpers/router';
 import { useTheme, useThemedStyles } from '@hooks/index';
+import { MenuItem, MenuItemProps } from '@modules/app/components/MenuItem';
 import { spacing } from '@styles/index';
 import { ITheme } from '@styles/theme';
 import Routes from '@utils/Routes';
@@ -14,27 +14,6 @@ import Animated, {
   withDelay,
   withSpring,
 } from 'react-native-reanimated';
-
-type MenuItemProps = {
-  icon: React.ReactNode;
-  label: string;
-  onPress: () => void;
-};
-
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onPress }) => {
-  const themedStyles = useThemedStyles<typeof styles>(styles);
-
-  return (
-    <CsCard style={themedStyles.menuItem} onPress={onPress}>
-      <View style={themedStyles.menuItemContent}>
-        {icon}
-        <CsText variant="body" style={themedStyles.menuItemText}>
-          {label}
-        </CsText>
-      </View>
-    </CsCard>
-  );
-};
 
 const Home: React.FC = () => {
   const theme = useTheme();
@@ -80,7 +59,7 @@ const Home: React.FC = () => {
     {
       icon: <Ionicons name="chatbubbles-outline" size={24} color={theme.primary} />,
       label: 'Discussion',
-        onPress: () => navigationRef.navigate(Routes.Discussion),
+      onPress: () => navigationRef.navigate(Routes.Discussion),
     },
     {
       icon: <Ionicons name="information-circle-outline" size={24} color={theme.primary} />,
@@ -212,20 +191,6 @@ const styles = (theme: ITheme) =>
       width: 80,
       height: 40,
       resizeMode: 'contain',
-    },
-    menuItem: {
-      width: '45%',
-      aspectRatio: 1,
-      marginBottom: spacing.md,
-    },
-    menuItemContent: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    menuItemText: {
-      marginTop: spacing.xs,
-      textAlign: 'center',
     },
   });
 

@@ -20,9 +20,6 @@ export const styles = (theme: ITheme) =>
       color: theme.text,
       fontSize: 16,
     },
-    inputFocused: {
-      borderColor: theme.primary,
-    },
     inputError: {
       borderColor: theme.notification,
     },
