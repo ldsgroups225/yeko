@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 const ErrorBoundaryPage = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hata!</Text>
+      <Text style={styles.text}>Oups!</Text>
     </View>
   );
 };
@@ -12,8 +12,8 @@ const ErrorBoundaryPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   text: {},
 });

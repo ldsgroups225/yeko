@@ -1,23 +1,33 @@
-import CsText from '@components/CsText';
-import { Ionicons } from '@expo/vector-icons';
-import { navigationRef } from '@helpers/router';
-import { useTheme, useThemedStyles } from '@hooks/index';
-import { MenuItem, MenuItemProps } from '@modules/app/components/MenuItem';
-import { spacing } from '@styles/index';
-import { ITheme } from '@styles/theme';
-import Routes from '@utils/Routes';
-import React, { useEffect } from 'react';
-import { Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
+import CsText from "@components/CsText";
+import { Ionicons } from "@expo/vector-icons";
+import { navigationRef } from "@helpers/router";
+import { useTheme, useThemedStyles } from "@hooks/index";
+import { MenuItem, MenuItemProps } from "@modules/app/components/MenuItem";
+import { spacing } from "@src/styles";
+import { ITheme } from "@styles/theme";
+import Routes from "@utils/Routes";
+import React, { useEffect } from "react";
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
+import { usePushNotifications } from "@hooks/usePushNotifications";
 
 const Home: React.FC = () => {
   const theme = useTheme();
   const themedStyles = useThemedStyles<typeof styles>(styles);
+
+  const { expoPushToken, notification } = usePushNotifications();
+  const data = JSON.stringify(notification, undefined, 2);
 
   const headerOpacity = useSharedValue(0);
   const menuItemsOpacity = useSharedValue(0);
@@ -38,32 +48,48 @@ const Home: React.FC = () => {
   const menuItems: MenuItemProps[] = [
     {
       icon: <Ionicons name="time-outline" size={24} color={theme.primary} />,
-      label: 'Ponctualité',
+      label: "Ponctualité",
       onPress: () => navigationRef.navigate(Routes.Punctuality),
     },
     {
-      icon: <Ionicons name="document-text-outline" size={24} color={theme.primary} />,
-      label: 'Notes',
+      icon: (
+        <Ionicons
+          name="document-text-outline"
+          size={24}
+          color={theme.primary}
+        />
+      ),
+      label: "Notes",
       onPress: () => navigationRef.navigate(Routes.Note),
     },
     {
-      icon: <Ionicons name="calendar-outline" size={24} color={theme.primary} />,
-      label: 'Emploi du temps',
+      icon: (
+        <Ionicons name="calendar-outline" size={24} color={theme.primary} />
+      ),
+      label: "Emploi du temps",
       onPress: () => navigationRef.navigate(Routes.Schedule),
     },
     {
       icon: <Ionicons name="book-outline" size={24} color={theme.primary} />,
-      label: 'Exercices',
+      label: "Exercices",
       onPress: () => navigationRef.navigate(Routes.Homework),
     },
     {
-      icon: <Ionicons name="chatbubbles-outline" size={24} color={theme.primary} />,
-      label: 'Discussion',
+      icon: (
+        <Ionicons name="chatbubbles-outline" size={24} color={theme.primary} />
+      ),
+      label: "Discussion",
       onPress: () => navigationRef.navigate(Routes.Discussion),
     },
     {
-      icon: <Ionicons name="information-circle-outline" size={24} color={theme.primary} />,
-      label: 'Info et scolarité',
+      icon: (
+        <Ionicons
+          name="information-circle-outline"
+          size={24}
+          color={theme.primary}
+        />
+      ),
+      label: "Info et scolarité",
       onPress: () => navigationRef.navigate(Routes.Info),
     },
   ];
@@ -72,7 +98,7 @@ const Home: React.FC = () => {
     <>
       <Animated.View style={[themedStyles.header, headerAnimatedStyle]}>
         <ImageBackground
-          source={require('@assets/images/school-background.jpg')}
+          source={require("@assets/images/school-background.jpg")}
           style={themedStyles.headerBackground}
           resizeMode="cover"
         >
@@ -84,13 +110,15 @@ const Home: React.FC = () => {
             </View>
             <View style={themedStyles.userContainer}>
               <Image
-                source={require('@assets/images/yeko_logo.png')}
+                source={require("@assets/images/yeko_logo.png")}
                 style={themedStyles.yekoLogo}
               />
+              <CsText>Token: {expoPushToken?.data ?? ""}</CsText>
+              <CsText>Notification: {data}</CsText>
               <View style={themedStyles.userInfoContainer}>
                 <TouchableOpacity style={themedStyles.userInfo}>
                   <Image
-                    source={require('@assets/images/profile-pic.webp')}
+                    source={require("@assets/images/profile-pic.webp")}
                     style={themedStyles.avatar}
                   />
                   <View style={themedStyles.userTextContainer}>
@@ -108,7 +136,9 @@ const Home: React.FC = () => {
           </View>
         </ImageBackground>
       </Animated.View>
-      <Animated.View style={[themedStyles.menuContainer, menuItemsAnimatedStyle]}>
+      <Animated.View
+        style={[themedStyles.menuContainer, menuItemsAnimatedStyle]}
+      >
         {menuItems.map((item, index) => (
           <MenuItem key={index} {...item} />
         ))}
@@ -131,35 +161,35 @@ const styles = (theme: ITheme) =>
     },
     headerOverlay: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      justifyContent: 'space-between',
+      backgroundColor: "rgba(0, 0, 0, 0.4)",
+      justifyContent: "space-between",
       padding: spacing.md,
     },
     schoolInfo: {
-      alignItems: 'flex-start',
+      alignItems: "flex-start",
     },
     schoolName: {
-      color: 'white',
-      fontWeight: 'bold',
+      color: "white",
+      fontWeight: "bold",
     },
     userContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
     },
     yekoLogo: {
       width: 60,
       height: 60,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     userInfoContainer: {
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
       borderRadius: 25,
       padding: spacing.xs,
     },
     userInfo: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       paddingHorizontal: spacing.sm,
     },
     avatar: {
@@ -172,25 +202,25 @@ const styles = (theme: ITheme) =>
       marginRight: spacing.sm,
     },
     userName: {
-      color: 'white',
-      fontWeight: 'bold',
+      color: "white",
+      fontWeight: "bold",
     },
     userRole: {
-      color: 'rgba(255, 255, 255, 0.8)',
+      color: "rgba(255, 255, 255, 0.8)",
     },
     menuContainer: {
       flex: 1,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-around',
-      alignItems: 'flex-start',
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-around",
+      alignItems: "flex-start",
       paddingHorizontal: spacing.md,
       paddingTop: spacing.lg,
     },
     logo: {
       width: 80,
       height: 40,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
   });
 

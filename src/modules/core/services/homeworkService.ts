@@ -1,6 +1,10 @@
-import { IHomeworkDTO } from '@modules/core/types/IHomeworkDTO';
-import { APPWRITE_DATABASE_ID, HOMEWORK_COLLECTION_ID, databases } from '@src/network/appwrite';
-import { Query } from 'appwrite';
+import { IHomeworkDTO } from "@modules/core/types/IHomeworkDTO";
+import {
+  APPWRITE_DATABASE_ID,
+  HOMEWORK_COLLECTION_ID,
+  databases,
+} from "@src/network/appwrite";
+import { Query } from "appwrite";
 
 /**
  * Module for managing homework records.
@@ -26,7 +30,7 @@ export const homework = {
       const response = await databases.getDocument(
         APPWRITE_DATABASE_ID,
         HOMEWORK_COLLECTION_ID,
-        homeworkId
+        homeworkId,
       );
 
       return {
@@ -38,7 +42,7 @@ export const homework = {
         itWillBeANote: response.is_graded,
       };
     } catch (error) {
-      console.error('Error getting homework record:', error);
+      console.error("Error getting homework record:", error);
       throw error;
     }
   },
@@ -58,9 +62,11 @@ export const homework = {
    */
   async getHomeworks(classId: string): Promise<IHomeworkDTO[]> {
     try {
-      const response = await databases.listDocuments(APPWRITE_DATABASE_ID, HOMEWORK_COLLECTION_ID, [
-        Query.equal('class_id', classId),
-      ]);
+      const response = await databases.listDocuments(
+        APPWRITE_DATABASE_ID,
+        HOMEWORK_COLLECTION_ID,
+        [Query.equal("class_id", classId)],
+      );
 
       return response.documents.map((document) => ({
         id: document.$id,
@@ -71,7 +77,7 @@ export const homework = {
         itWillBeANote: document.is_graded,
       }));
     } catch (error) {
-      console.error('Error getting homework records:', error);
+      console.error("Error getting homework records:", error);
       throw error;
     }
   },

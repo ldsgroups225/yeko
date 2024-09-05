@@ -1,6 +1,10 @@
-import { IAttendanceDTO } from '@modules/core/types/IAttendanceDTO';
-import { APPWRITE_DATABASE_ID, ATTENDANCE_COLLECTION_ID, databases } from '@src/network/appwrite';
-import { Query } from 'appwrite';
+import { IAttendanceDTO } from "@modules/core/types/IAttendanceDTO";
+import {
+  APPWRITE_DATABASE_ID,
+  ATTENDANCE_COLLECTION_ID,
+  databases,
+} from "@src/network/appwrite";
+import { Query } from "appwrite";
 
 /**
  * Module for managing attendance records.
@@ -11,7 +15,7 @@ export const attendance = {
    * Gets an attendance record by its ID.
    * @async
    * @param {string} attendanceId - The ID of the attendance record to retrieve.
-   * @returns {Promise<Attendance>} The attendance record with the specified ID.
+   * @returns {Promise<IAttendanceDTO>} The attendance record with the specified ID.
    * @throws {Error} If there's an error retrieving the attendance record.
    * @example
    * try {
@@ -26,7 +30,7 @@ export const attendance = {
       const response = await databases.getDocument(
         APPWRITE_DATABASE_ID,
         ATTENDANCE_COLLECTION_ID,
-        attendanceId
+        attendanceId,
       );
 
       return {
@@ -34,12 +38,12 @@ export const attendance = {
         date: response.date,
         status: response.status,
         isExcused: response.isExcused,
-        subject: response.subject,
+        subject: response.subjectName,
         startTime: response.start_time,
         endTime: response.end_time,
       };
     } catch (error) {
-      console.error('Error getting attendance record:', error);
+      console.error("Error getting attendance record:", error);
       throw error;
     }
   },
@@ -47,7 +51,7 @@ export const attendance = {
   /**
    * Gets all attendance records.
    * @async
-   * @returns {Promise<Attendance[]>} An array of all attendance records.
+   * @returns {Promise<IAttendanceDTO[]>} An array of all attendance records.
    * @throws {Error} If there's an error retrieving the attendance records.
    * @example
    * try {
@@ -62,20 +66,20 @@ export const attendance = {
       const response = await databases.listDocuments(
         APPWRITE_DATABASE_ID,
         ATTENDANCE_COLLECTION_ID,
-        [Query.equal('studentId', studentId)]
+        [Query.equal("studentId", studentId)],
       );
 
       return response.documents.map((document) => ({
         id: document.$id,
-        date: document.date,
+        date: document.$createdAt,
         status: document.status,
         isExcused: document.isExcused,
-        subject: document.subject,
+        subject: document.subjectName,
         startTime: document.start_time,
         endTime: document.end_time,
       }));
     } catch (error) {
-      console.error('Error getting attendance records:', error);
+      console.error("Error getting attendance records:", error);
       throw error;
     }
   },

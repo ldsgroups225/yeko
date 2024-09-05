@@ -1,18 +1,29 @@
-import CsCard from '@components/CsCard';
-import CsText from '@components/CsText';
-import { useThemedStyles } from '@hooks/index';
-import { useAttendance } from '@hooks/useAttendance';
-import { useAuth } from '@hooks/useAuth';
-import useDataFetching from '@hooks/useDataFetching';
-import { AttendanceStatus, IAttendanceDTO } from '@modules/core/types/IAttendanceDTO';
-import { shadows } from '@styles/index';
-import { spacing } from '@styles/spacing';
-import { ITheme } from '@styles/theme';
-import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { AnimatedFlatList, LoadingScreen, SummaryCard } from '../components/index';
-import { formatDate, groupBy } from '../utils/index';
+import CsCard from "@components/CsCard";
+import CsText from "@components/CsText";
+import { useThemedStyles } from "@hooks/index";
+import { useAttendance } from "@hooks/useAttendance";
+import { useAuth } from "@hooks/useAuth";
+import useDataFetching from "@hooks/useDataFetching";
+import {
+  AttendanceStatus,
+  IAttendanceDTO,
+} from "@modules/core/types/IAttendanceDTO";
+import { shadows } from "@src/styles";
+import { spacing } from "@styles/spacing";
+import { ITheme } from "@styles/theme";
+import React, { useCallback, useMemo, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import {
+  AnimatedFlatList,
+  LoadingScreen,
+  SummaryCard,
+} from "../components/index";
+import { formatDate, groupBy } from "../utils/index";
 
 const PunctualityScreen: React.FC = () => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
@@ -23,7 +34,9 @@ const PunctualityScreen: React.FC = () => {
 
   const fetchAttendances = useCallback(async () => {
     // Simulate API call delay
-    const selectedStudentId = account?.studentIDs?.length ? account!.studentIDs[0] : '';
+    const selectedStudentId = account?.studentIDs?.length
+      ? account!.studentIDs[0]
+      : "";
     return await getAttendances(selectedStudentId);
     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -130,40 +143,45 @@ const PunctualityScreen: React.FC = () => {
   } = useDataFetching(fetchAttendances, []);
 
   const summary = useMemo(() => {
-    if (!attendances) return { totalAbsences: 0, totalLates: 0, excusedAbsences: 0 };
+    if (!attendances)
+      return { totalAbsences: 0, totalLates: 0, excusedAbsences: 0 };
     return {
-      totalAbsences: attendances.filter((a) => a.status === 'absent').length,
-      totalLates: attendances.filter((a) => a.status === 'late').length,
-      excusedAbsences: attendances.filter((a) => a.status === 'absent' && a.isExcused).length,
+      totalAbsences: attendances.filter((a) => a.status === "absent").length,
+      totalLates: attendances.filter((a) => a.status === "late").length,
+      excusedAbsences: attendances.filter(
+        (a) => a.status === "absent" && a.isExcused,
+      ).length,
     };
   }, [attendances]);
 
   const summaryItems = [
     {
-      label: 'Total Absences',
+      label: "Total Absences",
       value: summary.totalAbsences,
-      icon: 'close-circle-outline' as const,
+      icon: "close-circle-outline" as const,
       color: themedStyles.error.color,
     },
     {
-      label: 'Total retards',
+      label: "Total retards",
       value: summary.totalLates,
-      icon: 'time-outline' as const,
+      icon: "time-outline" as const,
       color: themedStyles.warning.color,
     },
     {
-      label: 'Absences justifiées',
+      label: "Absences justifiées",
       value: summary.excusedAbsences,
-      icon: 'checkmark-circle-outline' as const,
+      icon: "checkmark-circle-outline" as const,
       color: themedStyles.success.color,
     },
   ];
 
   const groupedAttendances = useMemo(() => {
     if (!attendances) return [];
-    const grouped = groupBy(attendances, (a) => formatDate(a.date, 'yyyy-MM-dd'));
+    const grouped = groupBy(attendances, (a) =>
+      formatDate(a.date, "yyyy-MM-dd"),
+    );
     return Object.entries(grouped).map(([date, items]) => ({
-      title: formatDate(new Date(date), 'EEEE d MMMM yyyy'),
+      title: formatDate(new Date(date), "EEEE d MMMM yyyy"),
       data: items,
     }));
   }, [attendances]);
@@ -172,34 +190,45 @@ const PunctualityScreen: React.FC = () => {
     <View style={themedStyles.header}>
       <CsText style={themedStyles.headerTitle}>Ponctualité</CsText>
       <View style={themedStyles.monthsContainer}>
-        {['JAN', 'FEV', 'MAR', 'AVR', 'MAI', 'JUN', 'SEP', 'OCT', 'NOV', 'DEC'].map(
-          (month, index) => (
-            <TouchableOpacity
-              key={month}
+        {[
+          "JAN",
+          "FEV",
+          "MAR",
+          "AVR",
+          "MAI",
+          "JUN",
+          "SEP",
+          "OCT",
+          "NOV",
+          "DEC",
+        ].map((month, index) => (
+          <TouchableOpacity
+            key={month}
+            style={[
+              themedStyles.monthButton,
+              selectedMonth === index && themedStyles.selectedMonthButton,
+            ]}
+            onPress={() => setSelectedMonth(index)}
+          >
+            <CsText
               style={[
-                themedStyles.monthButton,
-                selectedMonth === index && themedStyles.selectedMonthButton,
+                themedStyles.monthButtonText,
+                selectedMonth === index && themedStyles.selectedMonthButtonText,
               ]}
-              onPress={() => setSelectedMonth(index)}
             >
-              <CsText
-                style={[
-                  themedStyles.monthButtonText,
-                  selectedMonth === index && themedStyles.selectedMonthButtonText,
-                ]}
-              >
-                {month}
-              </CsText>
-            </TouchableOpacity>
-          )
-        )}
+              {month}
+            </CsText>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
 
   const renderAttendanceItem = useCallback(
-    ({ item }: { item: IAttendanceDTO }) => <AttendanceItem attendance={item} />,
-    []
+    ({ item }: { item: IAttendanceDTO }) => (
+      <AttendanceItem attendance={item} />
+    ),
+    [],
   );
 
   if (loading) {
@@ -238,68 +267,81 @@ const PunctualityScreen: React.FC = () => {
   );
 };
 
-const AttendanceItem: React.FC<{ attendance: IAttendanceDTO }> = React.memo(({ attendance }) => {
-  const themedStyles = useThemedStyles<typeof styles>(styles);
-  const opacity = useSharedValue(0);
-
-  React.useEffect(() => {
-    opacity.value = withTiming(1, { duration: 500 });
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: withTiming(0, { duration: 500 }) }],
-  }));
-
-  const getStatusColor = (): 'error' | 'warning' | 'success' => {
-    if (attendance.status === 'absent') return attendance.isExcused ? 'warning' : 'error';
-    if (attendance.status === 'late') return 'warning';
-    return 'success';
-  };
-
-  const statusColor = getStatusColor();
-
-  return (
-    <Animated.View style={[themedStyles.attendanceItem, animatedStyle]}>
-      <CsCard style={{ ...themedStyles.attendanceCard, ...themedStyles[`${statusColor}Border`] }}>
-        <View style={themedStyles.attendanceHeader}>
-          <View>
-            <CsText variant="h3">{attendance.subject}</CsText>
-            <CsText variant="caption" style={themedStyles.timeText}>
-              {attendance.startTime} - {attendance.endTime}
-            </CsText>
-          </View>
-          <AttendanceStatusBadge status={attendance.status} isExcused={attendance.isExcused} />
-        </View>
-      </CsCard>
-    </Animated.View>
-  );
-});
-
-const AttendanceStatusBadge: React.FC<{ status: AttendanceStatus; isExcused: boolean }> =
-  React.memo(({ status, isExcused }) => {
+const AttendanceItem: React.FC<{ attendance: IAttendanceDTO }> = React.memo(
+  ({ attendance }) => {
     const themedStyles = useThemedStyles<typeof styles>(styles);
-    const getStatusColor = () => {
-      if (status === 'absent')
-        return isExcused ? themedStyles.warningBadge : themedStyles.errorBadge;
-      if (status === 'late') return themedStyles.warningBadge;
-      return themedStyles.successBadge;
+    const opacity = useSharedValue(0);
+
+    React.useEffect(() => {
+      opacity.value = withTiming(1, { duration: 500 });
+    }, []);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value,
+      transform: [{ translateY: withTiming(0, { duration: 500 }) }],
+    }));
+
+    const getStatusColor = (): "error" | "warning" | "success" => {
+      if (attendance.status === "absent")
+        return attendance.isExcused ? "warning" : "error";
+      if (attendance.status === "late") return "warning";
+      return "success";
     };
 
-    const getStatusText = () => {
-      if (status === 'absent') return isExcused ? 'Absence justifiée' : 'Absent';
-      if (status === 'late') return 'En retard';
-      return 'Présent';
-    };
+    const statusColor = getStatusColor();
 
     return (
-      <View style={[themedStyles.statusBadge, getStatusColor()]}>
-        <CsText variant="caption" style={themedStyles.statusText}>
-          {getStatusText()}
-        </CsText>
-      </View>
+      <Animated.View style={[themedStyles.attendanceItem, animatedStyle]}>
+        <CsCard
+          style={{
+            ...themedStyles.attendanceCard,
+            ...themedStyles[`${statusColor}Border`],
+          }}
+        >
+          <View style={themedStyles.attendanceHeader}>
+            <View>
+              <CsText variant="h3">{attendance.subject}</CsText>
+              <CsText variant="caption" style={themedStyles.timeText}>
+                {attendance.startTime} - {attendance.endTime}
+              </CsText>
+            </View>
+            <AttendanceStatusBadge
+              status={attendance.status}
+              isExcused={attendance.isExcused}
+            />
+          </View>
+        </CsCard>
+      </Animated.View>
     );
-  });
+  },
+);
+
+const AttendanceStatusBadge: React.FC<{
+  status: AttendanceStatus;
+  isExcused: boolean;
+}> = React.memo(({ status, isExcused }) => {
+  const themedStyles = useThemedStyles<typeof styles>(styles);
+  const getStatusColor = () => {
+    if (status === "absent")
+      return isExcused ? themedStyles.warningBadge : themedStyles.errorBadge;
+    if (status === "late") return themedStyles.warningBadge;
+    return themedStyles.successBadge;
+  };
+
+  const getStatusText = () => {
+    if (status === "absent") return isExcused ? "Absence justifiée" : "Absent";
+    if (status === "late") return "En retard";
+    return "Présent";
+  };
+
+  return (
+    <View style={[themedStyles.statusBadge, getStatusColor()]}>
+      <CsText variant="caption" style={themedStyles.statusText}>
+        {getStatusText()}
+      </CsText>
+    </View>
+  );
+});
 
 const styles = (theme: ITheme) =>
   StyleSheet.create({
@@ -315,18 +357,18 @@ const styles = (theme: ITheme) =>
     headerTitle: {
       color: theme.background,
       fontSize: 24,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       marginBottom: spacing.sm,
     },
     monthsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      justifyContent: "space-between",
       backgroundColor: theme.card,
       borderRadius: 8,
       padding: spacing.xs,
     },
     monthButton: {
-      alignItems: 'center',
+      alignItems: "center",
       padding: spacing.xs,
     },
     selectedMonthButton: {
@@ -346,7 +388,7 @@ const styles = (theme: ITheme) =>
     },
     dateHeader: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       marginTop: spacing.md,
       marginBottom: spacing.sm,
     },
@@ -359,9 +401,9 @@ const styles = (theme: ITheme) =>
       ...shadows.small,
     },
     attendanceHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
     },
     timeText: {
       marginTop: spacing.xs,
@@ -374,25 +416,25 @@ const styles = (theme: ITheme) =>
     },
     statusText: {
       color: theme.background,
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
     errorBorder: {
       borderLeftColor: theme.notification,
     },
     warningBorder: {
-      borderLeftColor: '#FFA500',
+      borderLeftColor: "#FFA500",
     },
     successBorder: {
-      borderLeftColor: '#4CAF50',
+      borderLeftColor: "#4CAF50",
     },
     errorBadge: {
       backgroundColor: theme.notification,
     },
     warningBadge: {
-      backgroundColor: '#FFA500',
+      backgroundColor: "#FFA500",
     },
     successBadge: {
-      backgroundColor: '#4CAF50',
+      backgroundColor: "#4CAF50",
     },
     primary: {
       color: theme.primary,
@@ -401,10 +443,10 @@ const styles = (theme: ITheme) =>
       color: theme.notification,
     },
     warning: {
-      color: '#FFA500',
+      color: "#FFA500",
     },
     success: {
-      color: '#4CAF50',
+      color: "#4CAF50",
     },
   });
 

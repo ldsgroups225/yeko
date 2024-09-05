@@ -1,18 +1,26 @@
-import CsCard from '@components/CsCard';
-import CsText from '@components/CsText';
-import { Ionicons } from '@expo/vector-icons';
-import { useThemedStyles } from '@hooks/index';
-import useDataFetching from '@hooks/useDataFetching';
-import { useHomework } from '@hooks/useHomework';
-import { IHomeworkDTO } from '@modules/core/types/IHomeworkDTO';
-import { borderRadius, shadows } from '@styles/index';
-import { spacing } from '@styles/spacing';
-import { ITheme } from '@styles/theme';
-import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { AnimatedFlatList, LoadingScreen, SummaryCard } from '../components/index';
-import { formatDate, groupBy } from '../utils/index';
+import CsCard from "@components/CsCard";
+import CsText from "@components/CsText";
+import { Ionicons } from "@expo/vector-icons";
+import { useThemedStyles } from "@hooks/index";
+import useDataFetching from "@hooks/useDataFetching";
+import { useHomework } from "@hooks/useHomework";
+import { IHomeworkDTO } from "@modules/core/types/IHomeworkDTO";
+import { borderRadius, shadows } from "@styles/index";
+import { spacing } from "@styles/spacing";
+import { ITheme } from "@styles/theme";
+import React, { useCallback, useMemo, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import {
+  AnimatedFlatList,
+  LoadingScreen,
+  SummaryCard,
+} from "../components/index";
+import { formatDate, groupBy } from "../utils/index";
 
 const HomeworkScreen: React.FC = () => {
   const themedStyles = useThemedStyles<typeof styles>(styles);
@@ -21,7 +29,7 @@ const HomeworkScreen: React.FC = () => {
   const { getHomeworks } = useHomework();
 
   const fetchHomework = useCallback(async () => {
-    return await getHomeworks('66c1d14b0035eaab4773');
+    return await getHomeworks("66c1d14b0035eaab4773");
     // Simulate API call delay
     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -65,24 +73,26 @@ const HomeworkScreen: React.FC = () => {
 
   const summaryItems = [
     {
-      label: 'Total des devoirs',
+      label: "Total des devoirs",
       value: summary.totalHomework,
-      icon: 'book-outline' as const,
+      icon: "book-outline" as const,
       color: themedStyles.primary.color,
     },
     {
-      label: 'Devoirs notés',
+      label: "Devoirs notés",
       value: summary.gradeableHomework,
-      icon: 'school-outline' as const,
+      icon: "school-outline" as const,
       color: themedStyles.warning.color,
     },
   ];
 
   const groupedHomeworks = useMemo(() => {
     if (!homeworks) return [];
-    const grouped = groupBy(homeworks, (hw) => formatDate(hw.dueDate, 'yyyy-MM-dd'));
+    const grouped = groupBy(homeworks, (hw) =>
+      formatDate(hw.dueDate, "yyyy-MM-dd"),
+    );
     return Object.entries(grouped).map(([date, items]) => ({
-      title: formatDate(new Date(date), 'EEEE d MMMM yyyy'),
+      title: formatDate(new Date(date), "EEEE d MMMM yyyy"),
       data: items,
     }));
   }, [homeworks]);
@@ -91,34 +101,43 @@ const HomeworkScreen: React.FC = () => {
     <View style={themedStyles.header}>
       <CsText style={themedStyles.headerTitle}>Devoirs</CsText>
       <View style={themedStyles.monthsContainer}>
-        {['JAN', 'FEV', 'MAR', 'AVR', 'MAI', 'JUN', 'SEP', 'OCT', 'NOV', 'DEC'].map(
-          (month, index) => (
-            <TouchableOpacity
-              key={month}
+        {[
+          "JAN",
+          "FEV",
+          "MAR",
+          "AVR",
+          "MAI",
+          "JUN",
+          "SEP",
+          "OCT",
+          "NOV",
+          "DEC",
+        ].map((month, index) => (
+          <TouchableOpacity
+            key={month}
+            style={[
+              themedStyles.monthButton,
+              selectedMonth === index && themedStyles.selectedMonthButton,
+            ]}
+            onPress={() => setSelectedMonth(index)}
+          >
+            <CsText
               style={[
-                themedStyles.monthButton,
-                selectedMonth === index && themedStyles.selectedMonthButton,
+                themedStyles.monthButtonText,
+                selectedMonth === index && themedStyles.selectedMonthButtonText,
               ]}
-              onPress={() => setSelectedMonth(index)}
             >
-              <CsText
-                style={[
-                  themedStyles.monthButtonText,
-                  selectedMonth === index && themedStyles.selectedMonthButtonText,
-                ]}
-              >
-                {month}
-              </CsText>
-            </TouchableOpacity>
-          )
-        )}
+              {month}
+            </CsText>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
 
   const renderHomeworkItem = useCallback(
     ({ item }: { item: IHomeworkDTO }) => <HomeworkItem homework={item} />,
-    []
+    [],
   );
 
   if (loading) {
@@ -157,42 +176,48 @@ const HomeworkScreen: React.FC = () => {
   );
 };
 
-const HomeworkItem: React.FC<{ homework: IHomeworkDTO }> = React.memo(({ homework }) => {
-  const themedStyles = useThemedStyles<typeof styles>(styles);
-  const opacity = useSharedValue(0);
+const HomeworkItem: React.FC<{ homework: IHomeworkDTO }> = React.memo(
+  ({ homework }) => {
+    const themedStyles = useThemedStyles<typeof styles>(styles);
+    const opacity = useSharedValue(0);
 
-  React.useEffect(() => {
-    opacity.value = withTiming(1, { duration: 500 });
-  }, []);
+    React.useEffect(() => {
+      opacity.value = withTiming(1, { duration: 500 });
+    }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: withTiming(0, { duration: 500 }) }],
-  }));
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value,
+      transform: [{ translateY: withTiming(0, { duration: 500 }) }],
+    }));
 
-  return (
-    <Animated.View style={[themedStyles.homeworkItem, animatedStyle]}>
-      <CsCard style={themedStyles.homeworkCard}>
-        <View style={themedStyles.homeworkHeader}>
-          <CsText variant="h3">{homework.subjectName}</CsText>
-          {homework.itWillBeANote && (
-            <View style={themedStyles.gradeBadge}>
-              <CsText variant="caption" style={themedStyles.gradeBadgeText}>
-                Noté
-              </CsText>
-            </View>
-          )}
-        </View>
-        <View style={themedStyles.homeworkDetails}>
-          <Ionicons name="calendar-outline" size={16} color={themedStyles.icon.color} />
-          <CsText variant="body" style={themedStyles.dueDate}>
-            À rendre le {formatDate(homework.dueDate, 'd MMMM')}
-          </CsText>
-        </View>
-      </CsCard>
-    </Animated.View>
-  );
-});
+    return (
+      <Animated.View style={[themedStyles.homeworkItem, animatedStyle]}>
+        <CsCard style={themedStyles.homeworkCard}>
+          <View style={themedStyles.homeworkHeader}>
+            <CsText variant="h3">{homework.subjectName}</CsText>
+            {homework.itWillBeANote && (
+              <View style={themedStyles.gradeBadge}>
+                <CsText variant="caption" style={themedStyles.gradeBadgeText}>
+                  Noté
+                </CsText>
+              </View>
+            )}
+          </View>
+          <View style={themedStyles.homeworkDetails}>
+            <Ionicons
+              name="calendar-outline"
+              size={16}
+              color={themedStyles.icon.color}
+            />
+            <CsText variant="body" style={themedStyles.dueDate}>
+              À rendre le {formatDate(homework.dueDate, "d MMMM")}
+            </CsText>
+          </View>
+        </CsCard>
+      </Animated.View>
+    );
+  },
+);
 
 const styles = (theme: ITheme) =>
   StyleSheet.create({
@@ -208,18 +233,18 @@ const styles = (theme: ITheme) =>
     headerTitle: {
       color: theme.background,
       fontSize: 24,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       marginBottom: spacing.sm,
     },
     monthsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      justifyContent: "space-between",
       backgroundColor: theme.card,
       borderRadius: 8,
       padding: spacing.xs,
     },
     monthButton: {
-      alignItems: 'center',
+      alignItems: "center",
       padding: spacing.xs,
     },
     selectedMonthButton: {
@@ -239,7 +264,7 @@ const styles = (theme: ITheme) =>
     },
     dateHeader: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       marginTop: spacing.md,
       marginBottom: spacing.sm,
     },
@@ -251,28 +276,28 @@ const styles = (theme: ITheme) =>
       ...shadows.small,
     },
     homeworkHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginBottom: spacing.sm,
     },
     homeworkDetails: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
     },
     dueDate: {
       marginLeft: spacing.xs,
       color: theme.textLight,
     },
     gradeBadge: {
-      backgroundColor: '#FFA500',
+      backgroundColor: "#FFA500",
       paddingVertical: spacing.xs,
       paddingHorizontal: spacing.sm,
       borderRadius: borderRadius.medium,
     },
     gradeBadgeText: {
       color: theme.background,
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
     icon: {
       color: theme.text,
@@ -280,8 +305,8 @@ const styles = (theme: ITheme) =>
     primary: {
       color: theme.primary,
     },
-    success: { color: '#4CAF50' },
-    warning: { color: '#FFA500' },
+    success: { color: "#4CAF50" },
+    warning: { color: "#FFA500" },
   });
 
 export default HomeworkScreen;

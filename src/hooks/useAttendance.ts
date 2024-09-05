@@ -1,6 +1,6 @@
-import { attendance } from '@modules/core/services/punctualityService';
-import { IAttendanceDTO } from '@modules/core/types/IAttendanceDTO';
-import { useState } from 'react';
+import { attendance } from "@modules/core/services/punctualityService";
+import { IAttendanceDTO } from "@modules/core/types/IAttendanceDTO";
+import { useState } from "react";
 
 /**
  * Return type for the `useAttendance` hook.
@@ -30,17 +30,19 @@ export const useAttendance = (): UseAttendanceReturn => {
    * Updates the loading and error states accordingly.
    *
    * @param {string} attendanceId - The ID of the attendance record to retrieve.
-   * @returns {Promise<Attendance | null>} A promise that resolves to the attendance object if successful,
+   * @returns {Promise<IAttendanceDTO | null>} A promise that resolves to the attendance object if successful,
    *                                             or null if an error occurs.
    */
-  const getAttendance = async (attendanceId: string): Promise<IAttendanceDTO | null> => {
+  const getAttendance = async (
+    attendanceId: string,
+  ): Promise<IAttendanceDTO | null> => {
     setLoading(true);
     setError(null);
     try {
       return await attendance.getAttendance(attendanceId);
     } catch (err) {
-      setError('Failed to get attendance record.');
-      console.error('[E_GET_ATTENDANCE]:', err);
+      setError("Failed to get attendance record.");
+      console.error("[E_GET_ATTENDANCE]:", err);
       return null;
     } finally {
       setLoading(false);
@@ -52,17 +54,19 @@ export const useAttendance = (): UseAttendanceReturn => {
    *
    * Updates the loading and error states accordingly.
    *
-   * @returns {Promise<Attendance[] | null>} A promise that resolves to an array of attendance objects if successful,
+   * @returns {Promise<IAttendanceDTO[] | null>} A promise that resolves to an array of attendance objects if successful,
    *                                               or null if an error occurs.
    */
-  const getAttendances = async (studentId: string): Promise<IAttendanceDTO[] | null> => {
+  const getAttendances = async (
+    studentId: string,
+  ): Promise<IAttendanceDTO[] | null> => {
     setLoading(true);
     setError(null);
     try {
       return await attendance.getAttendances(studentId);
     } catch (err) {
-      setError('Failed to get attendance records.');
-      console.error('[E_GET_ATTENDANCES]:', err);
+      setError("Failed to get attendance records.");
+      console.error("[E_GET_ATTENDANCES]:", err);
       return null;
     } finally {
       setLoading(false);

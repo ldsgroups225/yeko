@@ -1,8 +1,8 @@
-export type AttendanceStatus = 'present' | 'absent' | 'late';
+export type AttendanceStatus = "present" | "absent" | "late";
 
 export interface IAttendanceDTO {
   id: string;
-  date: Date;
+  date: string;
   status: AttendanceStatus;
   isExcused: boolean;
   subject: string;
